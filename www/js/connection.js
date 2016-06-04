@@ -4,6 +4,7 @@ angular.module('starter')
         $scope.from = 'Genève';
         $scope.to = 'Yverdon';
 
+
         /*
         $scope.connections = function (from, to) {
             return Transport.getConnections(from, to);

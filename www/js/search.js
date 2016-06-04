@@ -4,7 +4,10 @@ angular.module('starter')
         $scope.origin = Transport.defaultOrigin;
 
         var departures = function(origin) {
-            $scope.departures = Transport.getDeparturesFrom(origin)
+
+            Transport.getDeparturesWithAddress("Genève, rue schaub 12").then(function(data){console.log(data);});
+
+            $scope.departures = Transport.getDeparturesFrom("station=" +origin)
                 .then(function (data) {
                     $scope.departures = data;    
                 })

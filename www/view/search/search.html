@@ -1,18 +1,29 @@
 <ion-view view-title="Rechercher">
     <ion-content>
-   
-    <ion-refresher
-        pulling-text="Rafraichir"
-        on-refresh="onRefresh(origin)">
-    </ion-refresher>
+       
+        <ion-refresher
+            pulling-text="Rafraichir"
+            on-refresh="onRefresh(origin)">
+        </ion-refresher>
 
 
-    <div class='item item-input-inset'>
-        <label class="item-input-wrapper">
-            <i class="icon ion-search placeholder-icon"></i>
-            <input ng-model="origin" ng-change="textChanged(origin)" type="search" placeholder="City" ng-model-options="{debounce: 1000}">
-        </label>
-    </div>
+        <div class="item item-input-inset">
+            <div class="row">
+                <div class="col col-75">
+                    <label class="item-input-wrapper">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input ng-model="origin" ng-change="textChanged(origin)" type="search" placeholder="City" ng-model-options="{debounce: 1000}">
+                    </label>
+                </div>
+                <div class="col col-25">
+                        <select class="select">
+                            <option selected>Station</option>
+                            <option>Adresse</option>
+                        </select>
+                </div>
+            </div>
+
+        </div>
 
 
         <ion-list can-swipe="listCanSwipe">

@@ -82,16 +82,17 @@ var departureTimeFromNow = function (date) {
 }
 
 
-angular.module('starter').factory('Transport', function ($http) {
+angular.module('starter').factory('Transport', function ($http, $q) {
     return {
         defaultOrigin: "Genève",
-        getDeparturesFrom: function (text) {
+        getDeparturesFrom: function (text, limit) {
+            limit = limit === undefined ? 20 : limit;
 
             var departures = [];
             var stationsFrom = [];
             var stationsTo = [];
 
-            return $http.get('http://transport.opendata.ch/v1/stationboard?station=' + text + '&limit=20')
+            return $http.get('http://transport.opendata.ch/v1/stationboard?' + text + '&limit=' + limit)
                 .then(function (response) {
 
                     angular.forEach(response.data.stationboard, function(data){
@@ -108,7 +109,6 @@ angular.module('starter').factory('Transport', function ($http) {
                     
                     stationsFrom = _.uniqBy(stationsFrom, 'id');
                     stationsTo = _.uniqBy(stationsTo, 'id');
-                    console.log(stationsFrom);
                     
                     return {departures: departures, stationsFrom: stationsFrom, stationsTo: stationsTo };
                 });
@@ -162,15 +162,15 @@ angular.module('starter').factory('Transport', function ($http) {
         getNearestStations: function(address){
             lstStations = [];
             
-            $http.get('http://transport.opendata.ch/v1/locations?query=' + address)
-                .success(function (data) {
+            return $http.get('http://transport.opendata.ch/v1/locations?query=' + address)
+                .then(function (response) {
 
-                    var x = data.stations[0].coordinate.x;
-                    var y = data.stations[0].coordinate.y;
+                    var x = response.data.stations[0].coordinate.x;
+                    var y = response.data.stations[0].coordinate.y;
 
-                    $http.get('http://transport.opendata.ch/v1/locations?x=' + x + '&y=' + y)
-                        .success(function (data) {
-                            angular.forEach(data.stations, function (station) {
+                    return $http.get('http://transport.opendata.ch/v1/locations?x=' + x + '&y=' + y)
+                        .then(function (data) {
+                            angular.forEach(data.data.stations, function (station) {
                                 lstStations.push( {name: station.name, id: station.id, distance: station.distance} );
                             });
 
@@ -188,18 +188,44 @@ angular.module('starter').factory('Transport', function ($http) {
                                     }       
                                 );
                             }
+
+                            return lstStations;
                             
-                        })
-                        .error(function (error) {
-                            console.log(error);
                         });
-                })
-                .error(function (error) {
-                    console.log(error);
+                });
+        },
+
+        getDeparturesWithAddress: function (address) {
+
+                var _this = this;
+                var departures = [];
+                var stationsFrom = [];
+                var stationsTo = [];
+                
+                var defer = $q.defer();
+
+                _this.getNearestStations('genève, rue schaub 12').then( function(lstStations) { 
+
+                    var promises = [];
+
+                    angular.forEach(lstStations, function(station){
+                        promises.push(_this.getDeparturesFrom('id=' + station.id, 5));
+                    });
+
+                    $q.all(promises)
+                        .then(function(results){ 
+                            angular.forEach(results, function (result) { 
+                                departures = departures.concat(result.departures);
+                                stationsFrom = stationsFrom.concat(result.stationsFrom);
+                                stationsTo = stationsTo.concat(result.stationsTo);
+                            });
+                            stationsFrom = _.uniqBy(stationsFrom, 'id');
+                            stationsTo = _.uniqBy(stationsTo, 'id');
+                            defer.resolve({departures: departures, stationsFrom: stationsFrom, stationsTo: stationsTo });
+                        });
                 });
 
-            return lstStations;
+                return defer.promise;
         }
-
     }
  });

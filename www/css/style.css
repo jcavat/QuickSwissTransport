@@ -53,3 +53,17 @@ button.button.btn-info.option-button.button-light {
     border-radius: 7px;
     background: #9ae28f;
 }
+
+.item-select select {
+    padding: 0 30px 0 6px;
+}
+
+select.select {
+    background: #fff;
+    border: none;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    padding: 0 4px 0 10px;
+}
