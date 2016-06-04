@@ -1,0 +1,55 @@
+html{
+    height: 100%;
+}
+
+.col {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.item {
+    padding: 4px;
+}
+
+select.item-select {
+￼    padding: 3px;
+}
+
+.item-content{
+    padding: 0px !important;
+}
+
+label.item-input-wrapper {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.option-button {
+    height:100%;
+}
+
+.media-object {
+    height: 76px;
+}
+
+button.button.btn-info.option-button.button-light {
+    min-width: 30px;
+}
+
+.bloc {
+    padding-right: 6px;
+    margin: 5px 0 5px 0;
+}
+.bloc-space {
+    float: left;
+    margin: 5px 5px 0 0;
+}
+.bloc-station.ng-binding {
+    font-size: 12px;
+    padding: 0 3px;
+    text-align: center;
+    border: 1px solid #231212;
+    border-radius: 7px;
+    background: #9ae28f;
+}
