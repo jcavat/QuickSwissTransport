@@ -45,12 +45,15 @@ button.button.btn-info.option-button.button-light {
     float: left;
     margin: 5px 5px 0 0;
 }
-.bloc-station.ng-binding {
+.bloc-station{
     font-size: 12px;
     padding: 0 3px;
     text-align: center;
     border: 1px solid #231212;
     border-radius: 7px;
+    background: red;
+}
+.active{
     background: #9ae28f;
 }
 

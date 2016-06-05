@@ -96,14 +96,14 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                 .then(function (response) {
 
                     angular.forEach(response.data.stationboard, function(data){
-                        // Origin and destination stations list
-                        stationsFrom.push({id: data.stop.station.id, name: data.stop.station.name});
-                        stationsTo.push({id: data.passList[data.passList.length - 1].station.id, name: data.passList[data.passList.length - 1].station.name});
-
                         // details about transportation
                         var diff = departureTimeFromNow(data.stop.departure);
                         if(diff >= 0){
-                            departures.push({ from: data.stop.station.name, transport: data.name, to: data.to, departure: (diff == 0) ? "< 1 min" : diff + " min"});
+                            // Origin and destination stations list
+                            stationsFrom.push({id: data.stop.station.id, name: data.stop.station.name, active: true});
+                            stationsTo.push({id: data.passList[data.passList.length - 1].station.id, name: data.passList[data.passList.length - 1].station.name, active: true});
+
+                            departures.push({ from: data.stop.station.name, idFrom: data.stop.station.id, transport: data.name, to: data.to, idTo: data.passList[data.passList.length -1].station.id, departure: (diff == 0) ? "< 1 min" : diff + " min"});
                         }
                     });
                     
