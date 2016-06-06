@@ -34,7 +34,7 @@
                 <div class="row">
                     <div class="bloc">
                           <div class="bloc-space" ng-repeat="station in departures.stationsFrom">
-                              <button class="bloc-station" ng-class="station.active ? 'active' : ''" ng-click="onClickOrigin(station)">
+                              <button class="bloc-station" ng-class="isActiveStationOrigin(station) ? 'active' : ''" ng-click="onClickOrigin(station)">
                                   {{station.name}}
                               </button>
                           </div>
@@ -46,7 +46,7 @@
                 <div class="row">
                     <div class="bloc">
                           <div class="bloc-space" ng-repeat="station in departures.stationsTo">
-                              <button class="bloc-station" ng-class="station.active ? 'active' : ''" ng-click="onClickDestination(station)">
+                              <button class="bloc-station" ng-class="isActiveStationDestination(station) ? 'active' : ''" ng-click="onClickDestination(station)">
                                       {{station.name}}
                               </button>
                           </div>
@@ -58,7 +58,7 @@
                 <div class="row">
                     <div class="bloc">
                           <div class="bloc-space" ng-repeat="transport in departures.transports">
-                              <button class="bloc-station" ng-class="transport.active ? 'active' : ''" ng-click="onClickTransport(transport)">
+                              <button class="bloc-station" ng-class="isActiveTransport(transport) ? 'active' : ''" ng-click="onClickTransport(transport)">
                                       {{transport.name}}
                               </button>
                           </div>
@@ -66,7 +66,7 @@
                 </div>
             </ion-item>
 
-            <ion-item ng-repeat="departure in departures.departures" ng-if="isActive(departure.idOrigin, departure.idDestination)" href="#/tabs/home">
+            <ion-item ng-repeat="departure in departures.departures" ng-if="isActive(departure)" href="#/tabs/home">
                         <div class="row">
                             <div class="col col-80"><h3>{{departure.nameOrigin}}</h3></div>
                             <div class="col"><p>{{departure.departure}}</p></div>

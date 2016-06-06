@@ -77,8 +77,7 @@ var convertDurationToMinutes = function(date){
 var departureTimeFromNow = function (date) {
     var dep = new Date(date);
     var now = new Date();
-    var diff = Math.floor((dep - now)/(1000*60));
-    return diff;
+    return Math.floor((dep - now)/(1000*60));
 }
 
 
@@ -118,7 +117,7 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                     stationsFrom = _.uniqBy(stationsFrom, 'id');
                     stationsTo = _.uniqBy(stationsTo, 'id');
 
-                    transports = _.chain(departures).map(function (d) { return {'name': d.number, 'active': true }; } ).uniq().value();
+                    transports = _.chain(departures).map(function (d) { return {'name': d.number, 'active': true }; } ).uniqBy('name').value();
                     console.log(transports);
                     
                     return {departures: departures, stationsFrom: stationsFrom, stationsTo: stationsTo, transports: transports  };
