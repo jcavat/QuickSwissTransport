@@ -103,7 +103,7 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                             stationsFrom.push({id: data.stop.station.id, name: data.stop.station.name, active: true});
                             stationsTo.push({id: data.passList[data.passList.length - 1].station.id, name: data.passList[data.passList.length - 1].station.name, active: true});
 
-                            departures.push({ from: data.stop.station.name, idFrom: data.stop.station.id, transport: data.name, to: data.to, idTo: data.passList[data.passList.length -1].station.id, departure: (diff == 0) ? "< 1 min" : diff + " min"});
+                            departures.push({ nameOrigin: data.stop.station.name, idOrigin: data.stop.station.id, transport: data.name, nameDestination: data.to, idDestination: data.passList[data.passList.length -1].station.id, departure: (diff == 0) ? "< 1 min" : diff + " min"});
                         }
                     });
                     

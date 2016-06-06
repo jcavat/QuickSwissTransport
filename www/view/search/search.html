@@ -34,7 +34,7 @@
                 <div class="row">
                     <div class="bloc">
                           <div class="bloc-space" ng-repeat="station in departures.stationsFrom">
-                              <button class="bloc-station" ng-class="station.active ? 'active' : ''" ng-click="desactivateOriginStationId(station.id)">
+                              <button class="bloc-station" ng-class="station.active ? 'active' : ''" ng-click="onClickOrigin(station)">
                                   {{station.name}}
                               </button>
                           </div>
@@ -46,7 +46,7 @@
                 <div class="row">
                     <div class="bloc">
                           <div class="bloc-space" ng-repeat="station in departures.stationsTo">
-                              <button class="bloc-station" ng-class="station.active ? 'active' : ''" ng-click="desactivateDestinationStationId(station.id)">
+                              <button class="bloc-station" ng-class="station.active ? 'active' : ''" ng-click="onClickDestination(station)">
                                       {{station.name}}
                               </button>
                           </div>
@@ -55,13 +55,13 @@
                 </div>
             </ion-item>
 
-            <ion-item ng-repeat="departure in departures.departures" ng-if="isActive(departure.idFrom, departure.idTo)" href="#/tabs/home">
+            <ion-item ng-repeat="departure in departures.departures" ng-if="isActive(departure.idOrigin, departure.idDestination)" href="#/tabs/home">
                         <div class="row">
-                            <div class="col col-80"><h3>{{departure.from}}</h3></div>
+                            <div class="col col-80"><h3>{{departure.nameOrigin}}</h3></div>
                             <div class="col"><p>{{departure.departure}}</p></div>
                         </div>
                         <div class="row">
-                            <div class="col col-80"><h3>{{departure.to}}</h3></div>
+                            <div class="col col-80"><h3>{{departure.nameDestination}}</h3></div>
                             <div class="col"><p>{{departure.transport}}</p></div>
                         </div>
             </ion-item>
