@@ -47,45 +47,11 @@ angular.module('starter')
         }
 
         var disableDestinations = function(origin){
-            
             disable(origin, findDestinationsByOriginId, findOriginsByDestinationId, findOriginById, isActiveOrigin);
-/*
-            var destinations = findDestinationsByOriginId(origin.id);
-            var originsMatrix = _.map(destinations, function(d){ return findOriginsByDestinationId(d.id); });
-            var zip = _.zip(destinations, originsMatrix);
-            console.log(zip);
-
-            // For each origin, desactivate the destination if all origins aren't active
-            _.forEach(zip, function(elem) {
-                var station = findOriginById(elem[0].id);
-                if(_.every(elem[1], function(stationOrig){ return !isActiveOrigin(stationOrig.id);})){
-                    station.active = false;
-                }else{
-                    station.active = true;
-                }
-            });
-           */
         }
 
         var disableOrigins = function(origin){
-
             disable(origin, findOriginsByDestinationId, findDestinationsByOriginId, findDestinationById, isActiveDestination);
-/*
-            var origins = findOriginsByDestinationId(origin.id);
-            var destinationsMatrix = _.map(origins, function(d){ return findDestinationsByOriginId(d.id); });
-            var zip = _.zip(origins, destinationsMatrix);
-            console.log(zip);
-
-            // For each origin, desactivate the destination if all origins aren't active
-            _.forEach(zip, function(elem) {
-                var station = findDestinationById(elem[0].id);
-                if(_.every(elem[1], function(stationDest){ return !isActiveDestination(stationDest.id);})){
-                    station.active = false;
-                }else{
-                    station.active = true;
-                }
-            });
-           */
         }
 
         var departures = function(origin) {
@@ -120,6 +86,10 @@ angular.module('starter')
         $scope.onClickDestination = function(station){
             station.active = !station.active;
             disableOrigins(station);
+        }
+
+        $scope.onClickTransport = function(transport){
+            transport.active = !transport.active;
         }
 
         $scope.isActive = function(idOrigin, idDestination){
