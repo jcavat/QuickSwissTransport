@@ -103,14 +103,25 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                             stationsFrom.push({id: data.stop.station.id, name: data.stop.station.name, active: true});
                             stationsTo.push({id: data.passList[data.passList.length - 1].station.id, name: data.passList[data.passList.length - 1].station.name, active: true});
 
-                            departures.push({ nameOrigin: data.stop.station.name, idOrigin: data.stop.station.id, transport: data.name, nameDestination: data.to, idDestination: data.passList[data.passList.length -1].station.id, departure: (diff == 0) ? "< 1 min" : diff + " min"});
+                            departures.push({ 
+                                nameOrigin: data.stop.station.name,
+                                idOrigin: data.stop.station.id,
+                                transport: data.name,
+                                nameDestination: data.to,
+                                idDestination: data.passList[data.passList.length -1].station.id,
+                                number: data.name,
+                                departure: (diff == 0) ? "< 1 min" : diff + " min"}
+                            );
                         }
                     });
                     
                     stationsFrom = _.uniqBy(stationsFrom, 'id');
                     stationsTo = _.uniqBy(stationsTo, 'id');
+
+                    transports = _.chain(departures).map(function (d) { return {'name': d.number, 'active': true }; } ).uniq().value();
+                    console.log(transports);
                     
-                    return {departures: departures, stationsFrom: stationsFrom, stationsTo: stationsTo };
+                    return {departures: departures, stationsFrom: stationsFrom, stationsTo: stationsTo, transports: transports  };
                 });
 
 
@@ -154,8 +165,6 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                 .error(function (error) {
                     console.log(error);
                 });
-//this.getNearestStations('genève, hopitaux');
-//this.getNearestStations('genève, rue schaub 12');
             return lstJourney;
         },
 

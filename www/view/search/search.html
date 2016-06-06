@@ -51,7 +51,18 @@
                               </button>
                           </div>
                     </div>
-                         
+                </div>
+                <div class="row">
+                    <h3>Moyens de transport</h3>
+                </div>
+                <div class="row">
+                    <div class="bloc">
+                          <div class="bloc-space" ng-repeat="transport in departures.transports">
+                              <button class="bloc-station" ng-class="transport.active ? 'active' : ''" ng-click="onClickTransport(transport)">
+                                      {{transport.name}}
+                              </button>
+                          </div>
+                    </div>
                 </div>
             </ion-item>
 

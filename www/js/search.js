@@ -29,21 +29,63 @@ angular.module('starter')
             return _.find($scope.departures.stationsFrom, { 'id': id });
         }
 
-        var disableDestinations = function(id){
-            var dest = findDestinationsByOriginId(id);
-            
-            var orig = _.map(dest, function(d){ return findOriginsByDestinationId(d.id); });
-            var zip = _.zip(dest, orig);
+        var disable = function(station, findOpposed, findOthers, findById, isActiveStation) {
+            var opposited = findOpposed(station.id);
+            var matrix = _.map(opposited, function(d){ return findOthers(d.id); });
+            var zip = _.zip(opposited, matrix);
+            console.log(zip);
 
             // For each origin, desactivate the destination if all origins aren't active
             _.forEach(zip, function(elem) {
-                var station = findOriginById(elem[0].id);
-                if(_.every(elem[1], function(stationFrom){ return !isActiveOrigin(stationFrom.id);})){
+                var station = findById(elem[0].id);
+                if(_.every(elem[1], function(stationOpposite){ return !isActiveStation(stationOpposite.id);})){
                     station.active = false;
                 }else{
                     station.active = true;
                 }
             });
+        }
+
+        var disableDestinations = function(origin){
+            
+            disable(origin, findDestinationsByOriginId, findOriginsByDestinationId, findOriginById, isActiveOrigin);
+/*
+            var destinations = findDestinationsByOriginId(origin.id);
+            var originsMatrix = _.map(destinations, function(d){ return findOriginsByDestinationId(d.id); });
+            var zip = _.zip(destinations, originsMatrix);
+            console.log(zip);
+
+            // For each origin, desactivate the destination if all origins aren't active
+            _.forEach(zip, function(elem) {
+                var station = findOriginById(elem[0].id);
+                if(_.every(elem[1], function(stationOrig){ return !isActiveOrigin(stationOrig.id);})){
+                    station.active = false;
+                }else{
+                    station.active = true;
+                }
+            });
+           */
+        }
+
+        var disableOrigins = function(origin){
+
+            disable(origin, findOriginsByDestinationId, findDestinationsByOriginId, findDestinationById, isActiveDestination);
+/*
+            var origins = findOriginsByDestinationId(origin.id);
+            var destinationsMatrix = _.map(origins, function(d){ return findDestinationsByOriginId(d.id); });
+            var zip = _.zip(origins, destinationsMatrix);
+            console.log(zip);
+
+            // For each origin, desactivate the destination if all origins aren't active
+            _.forEach(zip, function(elem) {
+                var station = findDestinationById(elem[0].id);
+                if(_.every(elem[1], function(stationDest){ return !isActiveDestination(stationDest.id);})){
+                    station.active = false;
+                }else{
+                    station.active = true;
+                }
+            });
+           */
         }
 
         var departures = function(origin) {
@@ -72,15 +114,15 @@ angular.module('starter')
 
         $scope.onClickOrigin = function(station){
             station.active = !station.active;
-            disableDestinations(station.id);
+            disableDestinations(station);
         }
 
         $scope.onClickDestination = function(station){
             station.active = !station.active;
-            //findOriginsByDestinationId(station.id);
+            disableOrigins(station);
         }
 
         $scope.isActive = function(idOrigin, idDestination){
-            return !isActiveOrigin(idOrigin) && !isActiveDestination(idDestination);
+            return isActiveOrigin(idOrigin) && isActiveDestination(idDestination);
         }
     });
