@@ -2,8 +2,10 @@ angular.module('starter')
     .controller('SearchController', function($scope, $http, Transport){
         
         $scope.origin = Transport.defaultOrigin;
-        $scope.choice = "station";
-        $scope.error = "no";
+        $scope.option = {
+            choices :[{'id': 0, 'name': "station"}, {'id': 1, 'name': "adresse"}],
+            choice: 0
+        };
 
         var findDeparturesByStationOrigin = function(station){
             return _.filter($scope.departures.departures, {'idOrigin': station.id });
@@ -17,25 +19,21 @@ angular.module('starter')
 
         var departures = function(origin) {
 
-            if($scope.choice === "station"){
-                        $scope.error = "station en cours";
+            if($scope.option.choice === 0){
                 Transport.getDeparturesFrom("station=" + origin, 20, $scope)
                     .then(function (data) {
                         $scope.error = "en cours";
                         $scope.departures = data;    
                     })
                     .catch(function (error) { 
-                        scope.error = "failed" + error;
                         console.log("failed");}
                     );
             }else{
                 Transport.getDeparturesWithAddress(origin)
                     .then(function(data){
-                        $scope.error = "en cours address";
                         $scope.departures = data;
                     })
                     .catch(function (error) { 
-                        scope.error = "failed address" + error;
                         console.log("failed address");}
                     );
             }

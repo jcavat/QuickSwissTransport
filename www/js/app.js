@@ -81,25 +81,19 @@ var departureTimeFromNow = function (date) {
 }
 
 
-angular.module('starter').factory('Transport', function ($http, $q, $rootScope) {
+angular.module('starter').factory('Transport', function ($http, $q) {
     return {
         defaultOrigin: "Genève",
-        getDeparturesFrom: function (text, limit, root) {
+        getDeparturesFrom: function (text, limit) {
             limit = limit === undefined ? 20 : limit;
 
             var departures = [];
             var stationsFrom = [];
             var stationsTo = [];
 
-            if(root !== undefined){
-                root.error = 'http://transport.opendata.ch/v1/stationboard?' + text + '&limit=' + limit;
-            }
-
             return $http.get('http://transport.opendata.ch/v1/stationboard?' + text + '&limit=' + limit)
                 .then(function (response) {
 
-            if(root !== undefined)
-                root.error ="in2";
                     angular.forEach(response.data.stationboard, function(data){
                         // details about transportation
                         var diff = departureTimeFromNow(data.stop.departure);
@@ -122,8 +116,6 @@ angular.module('starter').factory('Transport', function ($http, $q, $rootScope) 
                         }
                     });
                     
-            if(root !== undefined)
-                root.error ="in3";
                     stationsFrom = _.uniqBy(stationsFrom, 'id');
                     stationsTo = _.uniqBy(stationsTo, 'id');
                     transports = _.chain(departures).map(function (d) { return {'name': d.number, 'active': true }; } ).uniqBy('name').value();
