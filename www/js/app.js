@@ -81,19 +81,25 @@ var departureTimeFromNow = function (date) {
 }
 
 
-angular.module('starter').factory('Transport', function ($http, $q) {
+angular.module('starter').factory('Transport', function ($http, $q, $rootScope) {
     return {
         defaultOrigin: "Genève",
-        getDeparturesFrom: function (text, limit) {
+        getDeparturesFrom: function (text, limit, root) {
             limit = limit === undefined ? 20 : limit;
 
             var departures = [];
             var stationsFrom = [];
             var stationsTo = [];
 
+            if(root !== undefined){
+                root.error = 'http://transport.opendata.ch/v1/stationboard?' + text + '&limit=' + limit;
+            }
+
             return $http.get('http://transport.opendata.ch/v1/stationboard?' + text + '&limit=' + limit)
                 .then(function (response) {
 
+            if(root !== undefined)
+                root.error ="in2";
                     angular.forEach(response.data.stationboard, function(data){
                         // details about transportation
                         var diff = departureTimeFromNow(data.stop.departure);
@@ -109,18 +115,20 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                                 nameDestination: data.to,
                                 idDestination: data.passList[data.passList.length -1].station.id,
                                 number: data.name,
-                                departure: (diff == 0) ? "< 1 min" : diff + " min"}
+                                active: true,
+                                departure: (diff == 0) ? "< 1 min" : diff + " min",
+                                departureTime: data.stop.departure }
                             );
                         }
                     });
                     
+            if(root !== undefined)
+                root.error ="in3";
                     stationsFrom = _.uniqBy(stationsFrom, 'id');
                     stationsTo = _.uniqBy(stationsTo, 'id');
-
                     transports = _.chain(departures).map(function (d) { return {'name': d.number, 'active': true }; } ).uniqBy('name').value();
-                    console.log(transports);
                     
-                    return {departures: departures, stationsFrom: stationsFrom, stationsTo: stationsTo, transports: transports  };
+                    return { departures: _.sortBy(departures, 'departureTime'), stationsFrom: stationsFrom, stationsTo: stationsTo, transports: transports };
                 });
 
 
@@ -209,10 +217,11 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                 var departures = [];
                 var stationsFrom = [];
                 var stationsTo = [];
+                var transports = [];
                 
                 var defer = $q.defer();
 
-                _this.getNearestStations('genève, rue schaub 12').then( function(lstStations) { 
+                _this.getNearestStations(address).then( function(lstStations) { 
 
                     var promises = [];
 
@@ -226,10 +235,12 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                                 departures = departures.concat(result.departures);
                                 stationsFrom = stationsFrom.concat(result.stationsFrom);
                                 stationsTo = stationsTo.concat(result.stationsTo);
+                                transports = transports.concat(result.transports);
                             });
                             stationsFrom = _.uniqBy(stationsFrom, 'id');
                             stationsTo = _.uniqBy(stationsTo, 'id');
-                            defer.resolve({departures: departures, stationsFrom: stationsFrom, stationsTo: stationsTo });
+                            transports = _.uniqBy(transports, 'name');
+                            defer.resolve({departures: _.sortBy(departures, 'departureTime'), stationsFrom: stationsFrom, stationsTo: stationsTo, transports: transports });
                         });
                 });
 

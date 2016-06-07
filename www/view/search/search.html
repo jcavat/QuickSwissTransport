@@ -16,9 +16,9 @@
                     </label>
                 </div>
                 <div class="col col-25">
-                        <select class="select">
-                            <option selected>Station</option>
-                            <option>Adresse</option>
+                        <select class="select" ng-model="choice" ng-change="textChanged(origin)">
+                            <option selected value="station">Station</option>
+                            <option value="address">Adresse</option>
                         </select>
                 </div>
             </div>
@@ -27,6 +27,9 @@
 
 
         <ion-list can-swipe="listCanSwipe">
+        <ion-item>
+            {{error}}
+        </ion-item>
             <ion-item>
                 <div class="row">
                     <h3>Stations de départ</h3>
