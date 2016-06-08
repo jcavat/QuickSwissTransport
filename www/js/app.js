@@ -170,11 +170,15 @@ angular.module('starter').factory('Transport', function ($http, $q) {
         getNearestStations: function(address){
             lstStations = [];
             
-            return $http.get('http://transport.opendata.ch/v1/locations?query=' + address)
+            //return $http.get('http://transport.opendata.ch/v1/locations?query=' + address)
+            return $http.get('https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=' + address + '&type=locations&limit=1')
                 .then(function (response) {
 
-                    var x = response.data.stations[0].coordinate.x;
-                    var y = response.data.stations[0].coordinate.y;
+                    //var x = response.data.stations[0].coordinate.x;
+                    //var y = response.data.stations[0].coordinate.y;
+
+                    var x = response.data.results[0].attrs.lat;
+                    var y = response.data.results[0].attrs.lon;
 
                     return $http.get('http://transport.opendata.ch/v1/locations?x=' + x + '&y=' + y)
                         .then(function (data) {

@@ -53,7 +53,7 @@ button.button.btn-info.option-button.button-light {
     border-radius: 7px;
     background: red;
 }
-.active{
+.bloc-station.active{
     background: #9ae28f;
 }
 

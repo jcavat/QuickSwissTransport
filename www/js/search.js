@@ -6,6 +6,7 @@ angular.module('starter')
             choices :[{'id': 0, 'name': "station"}, {'id': 1, 'name': "adresse"}],
             choice: 0
         };
+        $scope.searching = true;
 
         var findDeparturesByStationOrigin = function(station){
             return _.filter($scope.departures.departures, {'idOrigin': station.id });
@@ -18,24 +19,28 @@ angular.module('starter')
         }
 
         var departures = function(origin) {
+            $scope.searching = true;
 
             if($scope.option.choice === 0){
                 Transport.getDeparturesFrom("station=" + origin, 20, $scope)
                     .then(function (data) {
-                        $scope.error = "en cours";
                         $scope.departures = data;    
+                        $scope.searching = false;
                     })
                     .catch(function (error) { 
-                        console.log("failed");}
-                    );
+                        console.log("failed");
+                        $scope.searching = false;
+                    });
             }else{
                 Transport.getDeparturesWithAddress(origin)
                     .then(function(data){
                         $scope.departures = data;
+                        $scope.searching = false;
                     })
                     .catch(function (error) { 
-                        console.log("failed address");}
-                    );
+                        console.log("failed address");
+                        $scope.searching = false;
+                    });
             }
         }
 
