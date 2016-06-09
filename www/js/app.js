@@ -167,7 +167,7 @@ angular.module('starter').factory('Transport', function ($http, $q) {
             return lstJourney;
         },
 
-        getNearestStations: function(address){
+        getNearestStations: function(address, scp){
             lstStations = [];
             
             //return $http.get('http://transport.opendata.ch/v1/locations?query=' + address)
@@ -176,9 +176,11 @@ angular.module('starter').factory('Transport', function ($http, $q) {
 
                     //var x = response.data.stations[0].coordinate.x;
                     //var y = response.data.stations[0].coordinate.y;
+                    console.log(response);
 
                     var x = response.data.results[0].attrs.lat;
                     var y = response.data.results[0].attrs.lon;
+                    scp.error = response.data.results[0].attrs;
 
                     return $http.get('http://transport.opendata.ch/v1/locations?x=' + x + '&y=' + y)
                         .then(function (data) {
@@ -204,10 +206,40 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                             return lstStations;
                             
                         });
-                });
+                }).error(function(error){ scp.error = error;});
         },
 
-        getDeparturesWithAddress: function (address) {
+        getNearestStationsByCoordinates: function(x, y){
+            lstStations = [];
+            
+            return $http.get('http://transport.opendata.ch/v1/locations?x=' + x + '&y=' + y)
+                .then(function (data) {
+                    console.log("----_");
+                    console.log(data);
+                    angular.forEach(data.data.stations, function (station) {
+                        lstStations.push( {name: station.name, id: station.id, distance: station.distance} );
+                    });
+
+                    lstStations = lstStations.sort( 
+                        function (s1,s2) { 
+                            return s1.distance - s2.distance; 
+                        } 
+                    );
+
+                    if(lstStations.length > 0){
+                        var firstDistance = lstStations[0].distance;
+                        lstStations = lstStations.filter(
+                            function (s) {
+                                return s.distance < firstDistance + 200;
+                            }       
+                        );
+                    }
+
+                    return lstStations;
+                    
+                });
+        },
+        getDeparturesWithAddress: function (address, scp) {
 
                 var _this = this;
                 var departures = [];
@@ -217,12 +249,48 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                 
                 var defer = $q.defer();
 
-                _this.getNearestStations(address).then( function(lstStations) { 
+                _this.getNearestStations(address, scp).then( function(lstStations) { 
 
                     var promises = [];
 
                     angular.forEach(lstStations, function(station){
                         promises.push(_this.getDeparturesFrom('id=' + station.id, 5));
+                    });
+
+                    $q.all(promises)
+                        .then(function(results){ 
+                            angular.forEach(results, function (result) { 
+                                departures = departures.concat(result.departures);
+                                stationsFrom = stationsFrom.concat(result.stationsFrom);
+                                stationsTo = stationsTo.concat(result.stationsTo);
+                                transports = transports.concat(result.transports);
+                            });
+                            stationsFrom = _.uniqBy(stationsFrom, 'id');
+                            stationsTo = _.uniqBy(stationsTo, 'id');
+                            transports = _.uniqBy(transports, 'name');
+                            defer.resolve({departures: _.sortBy(departures, 'departureTime'), stationsFrom: stationsFrom, stationsTo: stationsTo, transports: transports });
+                        });
+                });
+
+                return defer.promise;
+        },
+
+        getDeparturesByCoordinates : function (x, y) {
+
+                var _this = this;
+                var departures = [];
+                var stationsFrom = [];
+                var stationsTo = [];
+                var transports = [];
+                
+                var defer = $q.defer();
+
+                _this.getNearestStationsByCoordinates(x, y).then( function(lstStations) { 
+
+                    var promises = [];
+
+                    angular.forEach(lstStations, function(station){
+                        promises.push(_this.getDeparturesFrom('id=' + station.id, 10));
                     });
 
                     $q.all(promises)

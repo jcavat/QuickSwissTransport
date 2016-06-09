@@ -10,11 +10,11 @@
         <div class="item item-input-inset">
             <div class="row">
                 <div class="col col-75">
-                    <label class="item item-input">
+                    <div class="item item-input">
                         <i class="icon ion-search placeholder-icon"></i>
                         <input ng-model="origin" ng-change="textChanged(origin)" type="search" placeholder="City" ng-model-options="{debounce: 2000}">
-                        <a href=""><i class="icon ion-android-locate placeholder-icon "></i></a>
-                    </label>
+                        <a ng-click="onSearchPosition()"><i class="icon ion-android-locate placeholder-icon "></i></a>
+                    </div>
                 </div>
                 <div class="col col-25">
                         <select class="select" ng-model="option.choice" ng-change="textChanged(origin)" ng-options="option.id as option.name for option in option.choices">
@@ -27,9 +27,8 @@
 
         <ion-list can-swipe="listCanSwipe">
             <ion-item>
-                {{searching}}
+              {{error}}
             </ion-item>
-
             <ion-item>
                 <div class="row">
                     <h3>Stations de départ</h3>

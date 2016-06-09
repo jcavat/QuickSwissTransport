@@ -1,12 +1,47 @@
 angular.module('starter')
-    .controller('SearchController', function($scope, $http, Transport){
+    .controller('SearchController', function($scope, $http, $ionicLoading, Transport){
+
+        var startLoading = function(){
+            $ionicLoading.show({ 
+                noBackdrop: true,
+                template: '<p><ion-spinner icon="circles" class="spinner-calm"/></p>'
+            });
+        }
+
+        var stopLoading = function(){
+            $ionicLoading.hide();
+        }
+
+        //var posOptions = {timeout: 10000, enableHighAccuracy: false};
+        $scope.onSearchPosition = function(){
+
+            startLoading();
+            navigator.geolocation
+                .getCurrentPosition(
+                    function (position) {
+                        var lat  = position.coords.latitude;
+                        var long = position.coords.longitude;
+
+                        Transport.getDeparturesByCoordinates(lat, long)
+                            .then(function (data) {
+                                $scope.departures = data;
+                                $scope.origin = "Ma position";
+                                $scope.option.choice = 2;
+                                stopLoading();
+                            });
+                    }, function(err) {
+                        // error
+                        stopLoading();
+                    }
+                    );
+        }
+
         
         $scope.origin = Transport.defaultOrigin;
         $scope.option = {
-            choices :[{'id': 0, 'name': "station"}, {'id': 1, 'name': "adresse"}],
+            choices :[{'id': 0, 'name': "station"}, {'id': 1, 'name': "adresse"}, {'id': 2, 'name': "GPS"} ],
             choice: 0
         };
-        $scope.searching = true;
 
         var findDeparturesByStationOrigin = function(station){
             return _.filter($scope.departures.departures, {'idOrigin': station.id });
@@ -19,28 +54,32 @@ angular.module('starter')
         }
 
         var departures = function(origin) {
-            $scope.searching = true;
+            startLoading();
 
             if($scope.option.choice === 0){
-                Transport.getDeparturesFrom("station=" + origin, 20, $scope)
+                Transport.getDeparturesFrom("station=" + origin, 20)
                     .then(function (data) {
                         $scope.departures = data;    
-                        $scope.searching = false;
+                        stopLoading();
                     })
                     .catch(function (error) { 
                         console.log("failed");
-                        $scope.searching = false;
+                        stopLoading();
                     });
-            }else{
-                Transport.getDeparturesWithAddress(origin)
+            }else if ($scope.option.choice === 1){
+                        $scope.error = origin;
+                Transport.getDeparturesWithAddress(origin, $scope)
                     .then(function(data){
                         $scope.departures = data;
-                        $scope.searching = false;
+                        stopLoading();
                     })
                     .catch(function (error) { 
                         console.log("failed address");
-                        $scope.searching = false;
+                        $scope.error = " choice 1 ko ";
+                        stopLoading();
                     });
+            }else{
+                $scope.onSearchPosition();
             }
         }
 
