@@ -167,20 +167,18 @@ angular.module('starter').factory('Transport', function ($http, $q) {
             return lstJourney;
         },
 
-        getNearestStations: function(address, scp){
+        getNearestStations: function(address){
             lstStations = [];
             
-            //return $http.get('http://transport.opendata.ch/v1/locations?query=' + address)
-            return $http.get('https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=' + address + '&type=locations&limit=1')
+            return $http.get('http://transport.opendata.ch/v1/locations?query=' + address)
+            //return $http.get('https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=' + address + '&type=locations&limit=1')
                 .then(function (response) {
 
-                    //var x = response.data.stations[0].coordinate.x;
-                    //var y = response.data.stations[0].coordinate.y;
-                    console.log(response);
+                    var x = response.data.stations[0].coordinate.x;
+                    var y = response.data.stations[0].coordinate.y;
 
-                    var x = response.data.results[0].attrs.lat;
-                    var y = response.data.results[0].attrs.lon;
-                    scp.error = response.data.results[0].attrs;
+                    //var x = response.data.results[0].attrs.lat;
+                    //var y = response.data.results[0].attrs.lon;
 
                     return $http.get('http://transport.opendata.ch/v1/locations?x=' + x + '&y=' + y)
                         .then(function (data) {
@@ -206,7 +204,7 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                             return lstStations;
                             
                         });
-                }).error(function(error){ scp.error = error;});
+                },function(error){ console.log(error);});
         },
 
         getNearestStationsByCoordinates: function(x, y){
@@ -214,8 +212,6 @@ angular.module('starter').factory('Transport', function ($http, $q) {
             
             return $http.get('http://transport.opendata.ch/v1/locations?x=' + x + '&y=' + y)
                 .then(function (data) {
-                    console.log("----_");
-                    console.log(data);
                     angular.forEach(data.data.stations, function (station) {
                         lstStations.push( {name: station.name, id: station.id, distance: station.distance} );
                     });
@@ -239,7 +235,7 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                     
                 });
         },
-        getDeparturesWithAddress: function (address, scp) {
+        getDeparturesWithAddress: function (address) {
 
                 var _this = this;
                 var departures = [];
@@ -249,7 +245,7 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                 
                 var defer = $q.defer();
 
-                _this.getNearestStations(address, scp).then( function(lstStations) { 
+                _this.getNearestStations(address).then( function(lstStations) { 
 
                     var promises = [];
 

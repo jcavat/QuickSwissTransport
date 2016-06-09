@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col col-75">
                     <div class="item item-input">
-                        <i class="icon ion-search placeholder-icon"></i>
+                        <a ng-click="onReset()"><i class="icon ion-close placeholder-icon"></i></a>
                         <input ng-model="origin" ng-change="textChanged(origin)" type="search" placeholder="City" ng-model-options="{debounce: 2000}">
                         <a ng-click="onSearchPosition()"><i class="icon ion-android-locate placeholder-icon "></i></a>
                     </div>
@@ -26,9 +26,6 @@
 
 
         <ion-list can-swipe="listCanSwipe">
-            <ion-item>
-              {{error}}
-            </ion-item>
             <ion-item>
                 <div class="row">
                     <h3>Stations de départ</h3>

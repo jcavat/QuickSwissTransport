@@ -12,6 +12,10 @@ angular.module('starter')
             $ionicLoading.hide();
         }
 
+        $scope.onReset = function(){
+            $scope.origin = "";
+        }
+
         //var posOptions = {timeout: 10000, enableHighAccuracy: false};
         $scope.onSearchPosition = function(){
 
@@ -25,12 +29,12 @@ angular.module('starter')
                         Transport.getDeparturesByCoordinates(lat, long)
                             .then(function (data) {
                                 $scope.departures = data;
+                                console.log(data);
                                 $scope.origin = "Ma position";
                                 $scope.option.choice = 2;
                                 stopLoading();
                             });
                     }, function(err) {
-                        // error
                         stopLoading();
                     }
                     );
@@ -54,6 +58,9 @@ angular.module('starter')
         }
 
         var departures = function(origin) {
+
+            if(origin === "")
+                return;
             startLoading();
 
             if($scope.option.choice === 0){
@@ -67,15 +74,13 @@ angular.module('starter')
                         stopLoading();
                     });
             }else if ($scope.option.choice === 1){
-                        $scope.error = origin;
-                Transport.getDeparturesWithAddress(origin, $scope)
+                Transport.getDeparturesWithAddress(origin)
                     .then(function(data){
                         $scope.departures = data;
                         stopLoading();
                     })
                     .catch(function (error) { 
                         console.log("failed address");
-                        $scope.error = " choice 1 ko ";
                         stopLoading();
                     });
             }else{
@@ -86,6 +91,9 @@ angular.module('starter')
         $scope.departures = departures($scope.origin);
             
         $scope.textChanged = function(text) { 
+            if($scope.origin === "Ma position"){
+                $scope.origin = "";
+            }
             $scope.departures = departures(text);
         }
 

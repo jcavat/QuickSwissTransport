@@ -70,3 +70,9 @@ select.select {
     top: 0;
     padding: 0 4px 0 10px;
 }
+
+/* search icon */
+.placeholder-icon:first-child {
+    padding-right: 10px;
+    padding-left: 4px;
+}
