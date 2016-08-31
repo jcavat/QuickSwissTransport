@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'ngCordova'])
 
 .config(function($stateProvider, $urlRouterProvider){
     $stateProvider
@@ -250,7 +250,7 @@ angular.module('starter').factory('Transport', function ($http, $q) {
                     var promises = [];
 
                     angular.forEach(lstStations, function(station){
-                        promises.push(_this.getDeparturesFrom('id=' + station.id, 5));
+                        promises.push(_this.getDeparturesFrom('id=' + station.id, 20));
                     });
 
                     $q.all(promises)

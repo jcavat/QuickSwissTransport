@@ -1,25 +1,32 @@
 angular.module('starter')
-    .controller('SearchController', function($scope, $http, $ionicLoading, Transport){
+    .controller('SearchController', function($scope, $http, $ionicLoading, $cordovaToast, Transport) {
 
-        var startLoading = function(){
-            $ionicLoading.show({ 
-                noBackdrop: true,
-                template: '<p><ion-spinner icon="circles" class="spinner-calm"/></p>'
-            });
-        }
-
-        var stopLoading = function(){
-            $ionicLoading.hide();
+        let Message = new function() {
+            this.startLoading = function() {
+                $ionicLoading.show({ 
+                    noBackdrop: true,
+                    template: '<ion-spinner on-click="$scope.stopLoading()" icon="circles" class="spinner-calm"/>',
+                    scope: $scope
+                });
+            },
+            this.stopLoading = function() {
+                $ionicLoading.hide();
+            }, 
+            this.stopLoadingWithError = function( message ) {
+                this.stopLoading();
+                this.toast( message );
+            }, 
+            this.toast = function( message ) {
+               $cordovaToast.show(message, 'long', 'center'); 
+            }
         }
 
         $scope.onReset = function(){
             $scope.origin = "";
         }
 
-        //var posOptions = {timeout: 10000, enableHighAccuracy: false};
         $scope.onSearchPosition = function(){
-
-            startLoading();
+            Message.startLoading();
             navigator.geolocation
                 .getCurrentPosition(
                     function (position) {
@@ -29,15 +36,16 @@ angular.module('starter')
                         Transport.getDeparturesByCoordinates(lat, long)
                             .then(function (data) {
                                 $scope.departures = data;
-                                console.log(data);
-                                $scope.origin = "Ma position";
+                                $scope.origin = "";
                                 $scope.option.choice = 2;
-                                stopLoading();
+                                Message.stopLoading();
                             });
-                    }, function(err) {
-                        stopLoading();
-                    }
-                    );
+                    }, 
+                    function(err) {
+                        Message.stopLoadingWithError( "Position non trouvée" );
+                    },
+                    { enableHighAccuracy: false, timeout: 5000, maximumAge: 0 }
+                );
         }
 
         
@@ -61,17 +69,16 @@ angular.module('starter')
 
             if(origin === "")
                 return;
-            startLoading();
+            Message.startLoading();
 
             if($scope.option.choice === 0){
-                Transport.getDeparturesFrom("station=" + origin, 20)
+                Transport.getDeparturesFrom("station=" + origin, 30)
                     .then(function (data) {
                         $scope.departures = data;    
-                        stopLoading();
+                        Message.stopLoading();
                     })
                     .catch(function (error) { 
-                        console.log("failed");
-                        stopLoading();
+                        stopLoadingWithError( "Requête réseau non aboutie" );
                     });
             }else if ($scope.option.choice === 1){
                 Transport.getDeparturesWithAddress(origin)
@@ -80,8 +87,7 @@ angular.module('starter')
                         stopLoading();
                     })
                     .catch(function (error) { 
-                        console.log("failed address");
-                        stopLoading();
+                        stopLoading( "Requête réseau non aboutie" );
                     });
             }else{
                 $scope.onSearchPosition();
@@ -91,10 +97,9 @@ angular.module('starter')
         $scope.departures = departures($scope.origin);
             
         $scope.textChanged = function(text) { 
-            if($scope.origin === "Ma position"){
-                $scope.origin = "";
+            if ($scope.origin !== "") {
+                $scope.departures = departures(text);
             }
-            $scope.departures = departures(text);
         }
 
         $scope.onRefresh = function(text){
