@@ -1,8 +1,8 @@
 angular.module('starter')
     .controller('ConnectionController', function($scope, $http, Transport){
 
-        $scope.from = 'Genève';
-        $scope.to = 'Yverdon';
+        $scope.from = '';
+        $scope.to = '';
 
 
         /*

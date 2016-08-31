@@ -3,7 +3,7 @@
        
         <ion-refresher
             pulling-text="Rafraichir"
-            on-refresh="onRefresh(origin)">
+            on-refresh="onRefresh(formData.origin)">
         </ion-refresher>
 
 
@@ -12,12 +12,12 @@
                 <div class="col col-75">
                     <div class="item item-input">
                         <a ng-click="onReset()"><i class="icon ion-close placeholder-icon"></i></a>
-                        <input ng-model="origin" ng-change="textChanged(origin)" type="search" placeholder="City" ng-model-options="{debounce: 2000}">
+                        <input ng-model="formData.origin" ng-change="textChanged()" type="search" placeholder="Lieu" ng-model-options="{debounce: 2000}">{{origin}}
                         <a ng-click="onSearchPosition()"><i class="icon ion-android-locate placeholder-icon "></i></a>
                     </div>
                 </div>
                 <div class="col col-25">
-                        <select class="select" ng-model="option.choice" ng-change="textChanged(origin)" ng-options="option.id as option.name for option in option.choices">
+                        <select class="select" ng-model="option.choice" ng-change="textChanged()" ng-options="option.id as option.name for option in option.choices">
                         </select>
                 </div>
             </div>

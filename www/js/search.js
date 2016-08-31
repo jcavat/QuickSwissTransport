@@ -21,8 +21,10 @@ angular.module('starter')
             }
         }
 
+        $scope.formData = {origin: Transport.defaultOrigin};
+
         $scope.onReset = function(){
-            $scope.origin = "";
+            $scope.formData.origin = Transport.defaultOrigin;
         }
 
         $scope.onSearchPosition = function(){
@@ -36,7 +38,7 @@ angular.module('starter')
                         Transport.getDeparturesByCoordinates(lat, long)
                             .then(function (data) {
                                 $scope.departures = data;
-                                $scope.origin = "";
+                                $scope.formData.origin = Transport.defaultOrigin;
                                 $scope.option.choice = 2;
                                 Message.stopLoading();
                             });
@@ -48,8 +50,6 @@ angular.module('starter')
                 );
         }
 
-        
-        $scope.origin = Transport.defaultOrigin;
         $scope.option = {
             choices :[{'id': 0, 'name': "station"}, {'id': 1, 'name': "adresse"}, {'id': 2, 'name': "GPS"} ],
             choice: 0
@@ -84,21 +84,22 @@ angular.module('starter')
                 Transport.getDeparturesWithAddress(origin)
                     .then(function(data){
                         $scope.departures = data;
-                        stopLoading();
+                        Message.stopLoading();
                     })
                     .catch(function (error) { 
-                        stopLoading( "Requête réseau non aboutie" );
+                        Message.stopLoading( "Requête réseau non aboutie" );
                     });
             }else{
                 $scope.onSearchPosition();
             }
         }
 
-        $scope.departures = departures($scope.origin);
+        $scope.departures = departures($scope.formData.origin);
             
-        $scope.textChanged = function(text) { 
-            if ($scope.origin !== "") {
-                $scope.departures = departures(text);
+        $scope.textChanged = function() { 
+            console.log( "* " + $scope.formData.origin );
+            if ($scope.formData.origin !== "") {
+                $scope.departures = departures($scope.formData.origin);
             }
         }
 

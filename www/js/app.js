@@ -83,7 +83,7 @@ var departureTimeFromNow = function (date) {
 
 angular.module('starter').factory('Transport', function ($http, $q) {
     return {
-        defaultOrigin: "Genève",
+        defaultOrigin: "",
         getDeparturesFrom: function (text, limit) {
             limit = limit === undefined ? 20 : limit;
 
