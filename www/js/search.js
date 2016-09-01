@@ -1,25 +1,5 @@
 angular.module('starter')
-    .controller('SearchController', function($scope, $http, $ionicLoading, $cordovaToast, Transport) {
-
-        let Message = new function() {
-            this.startLoading = function() {
-                $ionicLoading.show({ 
-                    noBackdrop: true,
-                    template: '<ion-spinner on-click="$scope.stopLoading()" icon="circles" class="spinner-calm"/>',
-                    scope: $scope
-                });
-            },
-            this.stopLoading = function() {
-                $ionicLoading.hide();
-            }, 
-            this.stopLoadingWithError = function( message ) {
-                this.stopLoading();
-                this.toast( message );
-            }, 
-            this.toast = function( message ) {
-               $cordovaToast.show(message, 'long', 'center'); 
-            }
-        }
+    .controller('SearchController', function($scope, $http, $ionicLoading, $cordovaToast, Transport, Message) {
 
         $scope.formData = {origin: Transport.defaultOrigin};
 
