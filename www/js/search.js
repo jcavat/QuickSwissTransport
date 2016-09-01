@@ -1,5 +1,5 @@
 angular.module('starter')
-    .controller('SearchController', function($scope, $http, $ionicLoading, $cordovaToast, Transport, Message) {
+    .controller('SearchController', function($scope, $http, $ionicLoading, Transport, Message) {
 
         $scope.formData = {origin: Transport.defaultOrigin};
 
@@ -24,7 +24,7 @@ angular.module('starter')
                             });
                     }, 
                     function(err) {
-                        Message.stopLoadingWithError( "Position non trouvée" );
+                        Message.stopLoadingWithError( "Position non trouvée ou GPS inactif" );
                     },
                     { enableHighAccuracy: false, timeout: 5000, maximumAge: 0 }
                 );
@@ -77,14 +77,17 @@ angular.module('starter')
         $scope.departures = departures($scope.formData.origin);
             
         $scope.textChanged = function() { 
-            console.log( "* " + $scope.formData.origin );
             if ($scope.formData.origin !== "") {
                 $scope.departures = departures($scope.formData.origin);
             }
         }
 
-        $scope.onRefresh = function(text){
-            $scope.departures = departures(text);
+        $scope.onRefresh = function(){
+            if($scope.option.choice === 2){
+                $scope.onSearchPosition();
+            } else {
+                $scope.departures = departures($scope.formData.origin);
+            }
             $scope.$broadcast('scroll.refreshComplete');
         }
 

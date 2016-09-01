@@ -1,15 +1,8 @@
 angular.module('starter')
     .controller('ConnectionController', function($scope, $http, Transport){
 
-        $scope.from = '';
-        $scope.to = '';
-
-
-        /*
-        $scope.connections = function (from, to) {
-            return Transport.getConnections(from, to);
-        };
-       */
+        $scope.from = Transport.defaultOrigin;
+        $scope.to = Transport.defaultDestination;
 
         $scope.onClick = function (from, to) {
             $scope.connections = Transport.getConnections(from, to);

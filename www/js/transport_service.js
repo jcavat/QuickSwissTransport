@@ -1,6 +1,7 @@
 angular.module('starter').factory('Transport', function ($http, $q, ConverterHelper) {
     return {
         defaultOrigin: "",
+        defaultDestination: "",
         getDeparturesFrom: function (text, limit) {
             limit = limit === undefined ? 20 : limit;
 
