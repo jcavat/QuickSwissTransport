@@ -1,11 +1,11 @@
 angular.module('starter')
-    .controller('SearchController', function($scope, $http, $ionicLoading, Transport, Message) {
+    .controller('SearchController', function($scope, Transport, Message) {
 
         $scope.formData = {origin: Transport.defaultOrigin};
 
         $scope.onReset = function(){
             $scope.formData.origin = Transport.defaultOrigin;
-        }
+        };
 
         $scope.onSearchPosition = function(){
             Message.startLoading();
@@ -28,7 +28,7 @@ angular.module('starter')
                     },
                     { enableHighAccuracy: false, timeout: 5000, maximumAge: 0 }
                 );
-        }
+        };
 
         $scope.option = {
             choices :[{'id': 0, 'name': "station"}, {'id': 1, 'name': "adresse"}, {'id': 2, 'name': "GPS"} ],
@@ -47,8 +47,10 @@ angular.module('starter')
 
         var departures = function(origin) {
 
-            if(origin === "")
+            if(origin === "") {
                 return;
+            }
+
             Message.startLoading();
 
             if($scope.option.choice === 0){
@@ -58,7 +60,7 @@ angular.module('starter')
                         Message.stopLoading();
                     })
                     .catch(function (error) { 
-                        stopLoadingWithError( "Requête réseau non aboutie" );
+                        Message.stopLoadingWithError( "Requête réseau non aboutie" );
                     });
             }else if ($scope.option.choice === 1){
                 Transport.getDeparturesWithAddress(origin)

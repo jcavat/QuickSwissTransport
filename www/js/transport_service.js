@@ -41,9 +41,8 @@ angular.module('starter').factory('Transport', function ($http, $q, ConverterHel
                     return { departures: _.sortBy(departures, 'departureTime'), stationsFrom: stationsFrom, stationsTo: stationsTo, transports: transports };
                 });
 
-
         },
-        getConnections: function (from, to, successCallback) {
+        getConnections: function (from, to) {
             var lstJourney = [];
             $http.get('http://transport.opendata.ch/v1/connections?from=' + from + '&to=' + to)
                 .success(function (data) {
